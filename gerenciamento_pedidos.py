@@ -199,7 +199,7 @@ def limpar_tabela():
     conn.close()
 
 
-def menu():
+def menu_pedidos():
     while True:
         print("\nMenu:")
         print("1. Criar pedido")
@@ -313,4 +313,5 @@ def menu():
             print("digite uma opção valida")
 
 
-menu()
+if __name__=='__main__':
+    menu_pedidos()

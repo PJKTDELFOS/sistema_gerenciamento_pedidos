@@ -1,6 +1,7 @@
 import sqlite3
+from openpyxl import load_workbook
 def conectar():
-    return sqlite3.connect("dados1.db")
+    return sqlite3.connect("recursos_humanos.db")
 def criar_tabela():
     conn=conectar()
     cursor=conn.cursor()
@@ -23,6 +24,28 @@ def criar_usuario(nome,idade,telefone,endereco,cargo,salario):
     cursor.execute(' insert into usuarios (nome,idade,telefone,endereco,cargo,salario)'
                    ' values (?,?,?,?,?,?)',(nome,idade,telefone,endereco,cargo,salario))
     conn.commit()
+    workbook=load_workbook('rh.xlsx')
+    sheet=workbook['sheet']
+    next_row=sheet.max_row+1
+    last_id=None
+
+
+    for row in range(2,sheet.max_row+1):
+       cell_value=sheet.cell(row=row,column=1).value
+       if isinstance(cell_value,int):
+           last_id=cell_value
+    if last_id is None:
+        id=1
+    else:
+        id=last_id+1
+    sheet.cell(row=next_row, column=1).value = id
+    sheet.cell(row=next_row, column=2).value = nome
+    sheet.cell(row=next_row, column=3).value = idade
+    sheet.cell(row=next_row, column=4).value = telefone
+    sheet.cell(row=next_row, column=5).value = endereco
+    sheet.cell(row=next_row, column=6).value = cargo
+    sheet.cell(row=next_row, column=7).value = salario
+    workbook.save('rh.xlsx')
     conn.close()
 def ver_dados():
     conn = conectar()
@@ -42,6 +65,18 @@ def atualizar_usuarios(id,novo_nome,nova_idade,novo_telefone,novo_endereco,novo_
                                                 novo_cargo,novo_salario,id)
     )
     conn.commit()
+    workbook=load_workbook('rh.xlsx')
+    sheet=workbook['sheet']
+    for row in sheet.iter_rows(min_row=2,max_row=sheet.max_row,min_col=1,max_col=1):
+        if row[0].value==id:
+            sheet.cell(row=row[0].row,column=2).value=novo_nome
+            sheet.cell(row=row[0].row, column=3).value = nova_idade
+            sheet.cell(row=row[0].row, column=4).value = novo_telefone
+            sheet.cell(row=row[0].row, column=5).value = novo_endereco
+            sheet.cell(row=row[0].row, column=6).value = novo_cargo
+            sheet.cell(row=row[0].row, column=7).value = novo_salario
+            break
+            workbook.save('rh.xlsx')
     conn.close()
 def deletar_usuario(id):
     conn = conectar()
@@ -50,6 +85,28 @@ def deletar_usuario(id):
         ' delete from usuarios where id= ?',(id,)
     )
     conn.commit()
+    workbook = load_workbook('rh.xlsx')
+    sheet = workbook['sheet']
+    id_buscado=id
+    coluna_id=1
+    for row in range(2,sheet.max_row+1):
+        if sheet.cell(row=row,column=coluna_id).value==id_buscado:
+            sheet.delete_rows(row)
+            break
+    workbook.save('rh.xlsx')
+    conn.close()
+def limpar_banco():
+    conn = conectar()
+    cursor = conn.cursor()
+    cursor.execute(
+        ' delete from usuarios;'
+    )
+
+    conn.commit()
+    workbook = load_workbook('rh.xlsx')
+    sheet = workbook['sheet']
+    sheet.delete_rows(2, sheet.max_row)
+    workbook.save('rh.xlsx')
     conn.close()
 
 def menu_rh():
@@ -60,7 +117,8 @@ def menu_rh():
         print("3. Ver dados")
         print("4. Atualizar usuário")
         print("5. Deletar usuário")
-        print("6. Sair")
+        print("6. Limpar tabela")
+        print("7. Sair")
         opcao=input("didite uma opção")
         if opcao=='1':
             criar_tabela()
@@ -111,8 +169,10 @@ def menu_rh():
             deletar_usuario(id)
             print(f"Usuário {id} deletado com sucesso.")
         elif opcao == '6':
-            print("Saindo...")
+            limpar_banco()
+        elif opcao=='7':
             break
+
         else:
             print("digite uma opção valida")
 
