@@ -205,6 +205,21 @@ def limpar_tabela():
     conn.commit()
     conn.close()
 
+def cnpj(cnpj):
+    return '{}.{}.{}/{}-{}'.format(
+        cnpj[:2], cnpj[2:5], cnpj[5:8], cnpj[8:12], cnpj[12:])
+def ler_cnpj(cnpjn):
+    return cnpj(cnpjn)
+def validacao_CNPJ():
+    while True:
+        try:
+            cnpjn = input('Digite o Cnpj: ')
+            if len(cnpjn) != 14 or not cnpjn.isdigit():
+                raise ValueError('CNPJ inválido')
+            return cnpjn
+        except ValueError as e:
+            print(e)
+            print('Porfavor ,tente novamente.\n')
 
 def menu_pedidos():
     while True:
@@ -221,10 +236,12 @@ def menu_pedidos():
         print("s. encerrar programa ")
         opcao = input("didite uma opção")
         if opcao == '1':
+            cnpjn = validacao_CNPJ()
+            cnpjv = ler_cnpj(cnpjn)
             name = input('Nome do pedido(sem extensão): ')
             n_pedido = input('Numero do pedido: ')
             data_origin = datetime.now().strftime("%d %m %Y %H:%M:%S")
-            cnpj = input('Numero CNPJ contratante(formato 00.000.000/0001-00):  ')
+            cnpj = cnpjv
             contratante = input("Contratante: ")
             endereco_contratante = input("Endereço do Contratante: ")
             n_contrato = input('Contrato Nº: ')
