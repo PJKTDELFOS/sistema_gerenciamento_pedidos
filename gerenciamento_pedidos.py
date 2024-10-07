@@ -2,6 +2,9 @@ import sqlite3
 from openpyxl import load_workbook
 from datetime import datetime
 import os
+
+
+import numpy
 def criar_pedido(name, n_pedido, data_origin, cnpj, contratante, endereco_contratante,
                  n_contrato, Ata_RP, empenho, o_f, data_recebimento_empenho, nf, contato,
                  telefone, email, objeto, data_hora_entrega, local_entrega, U_F, qtde, obs,
@@ -291,7 +294,6 @@ def menu_pedidos():
                 newqtde = input('Nova Quantidade em função da unidade de fornecimento: ')
                 newobs = input('Novas Observações/instruções para o pedido (tamanho <= 1800 caracteres): ')
                 newcoord = input('Novos Coordenadores responsáveis pela execução: ')
-                novo_valor=float('Digite o valor atualizado para o pedido:')
 
                 atualizar_pedido(name, newn_pedido, data_att, id, newcnpj, newcontratante,
                                  newendereco_contratante, newn_contrato, newAta_RP, newempenho, newo_f,

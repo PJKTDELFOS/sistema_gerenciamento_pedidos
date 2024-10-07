@@ -1,6 +1,7 @@
 import sqlite3
 from openpyxl import workbook, load_workbook
 import time
+import numpy as np
 
 def conectar():
     return sqlite3.connect('contratos.db')

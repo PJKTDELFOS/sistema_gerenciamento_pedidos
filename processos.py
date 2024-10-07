@@ -1,5 +1,6 @@
 import sqlite3
 from openpyxl import workbook,load_workbook
+import numpy as np
 
 def con():
     return sqlite3.connect("processos.db")
@@ -71,7 +72,7 @@ def att_processos(id,modalidade,contratante,numero,data_limite,status):
         'where id = ?', (modalidade,contratante,numero,data_limite,status, id)
     )
     conn.commit()
-    workbook = load_workbook('rh.xlsx')
+    workbook = load_workbook('processos.xlsx')
     sheet = workbook['processos']
     for row in sheet.iter_rows(min_row=2, max_row=sheet.max_row, min_col=1, max_col=1):
         if row[0].value == id:

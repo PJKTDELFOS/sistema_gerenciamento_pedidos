@@ -3,6 +3,7 @@ from processos import menu_processos
 from contratos import menu_contratos
 
 
+
 def menu_comercial():
     while True:
         print("\nMenu:")
@@ -26,7 +27,10 @@ def menu_comercial():
 
 
 
+
 menu_comercial()
+
+
 
 
 
