@@ -31,7 +31,8 @@ def criar_pedido(name, n_pedido, data_origin, cnpj, contratante, endereco_contra
     worksheet['A23'] = obs
     worksheet['B51'] = coord
     status_pedido=input('status do pedido')
-    inserir_pedido_banco_dados(n_pedido, n_contrato, empenho, objeto, data_hora_entrega, coord, data_origin,status_pedido)
+    valor=float(input("valor do Pedido:"))
+    inserir_pedido_banco_dados(n_pedido, n_contrato, empenho, objeto, data_hora_entrega, coord, data_origin,status_pedido,valor)
     workbook.save(filename=f'{name}.xlsx')
     print(f"Planilha salva como '{name}.xlsx'.")
 def atualizar_pedido(name, newn_pedido, data_att, id, newcnpj=None, newcontratante=None,
@@ -65,8 +66,9 @@ def atualizar_pedido(name, newn_pedido, data_att, id, newcnpj=None, newcontratan
     worksheet['A23'] = newobs or worksheet['A23'].value
     worksheet['B51'] = newcoord or worksheet['B51'].value
     novo_status=input('atualize o status do pedido')
+    novo_valor=float(input("Valor atualizado do Pedido"))
     att_pedido_DB(id, newn_pedido, newn_contrato, newempenho, newobjeto,
-                  newdata_hora_entrega, newcoord, data_att,novo_status)
+                  newdata_hora_entrega, newcoord, data_att,novo_status,novo_valor)
 
     workbook.save(filename=filename)
     print(f"Pedido '{name}.xlsx' atualizado com sucesso.")
@@ -78,21 +80,22 @@ def criar_tabela():
     cursor.execute('''
           create table if not exists pedidos (
           id integer primary key autoincrement,
-          numero text,
-          contrato text,
-          empenho text,
-          objeto text,
-          data_entrega text,
-          coordenador text,
-          data_criacao_att text,
-          status text
+          numero text not null,
+          contrato text not null,
+          empenho text not null,
+          objeto text not null,
+          data_entrega text not null,
+          coordenador text not null,
+          data_criacao_att text not null,
+          status text not null,
+          valor float not null          
           )
           ''')
     conn.commit()
     conn.close()
 def inserir_pedido_banco_dados(n_pedido, contrato, empenho,
                                objeto, data_hora_entrega,
-                               coordenador, data_origin,status_pedido):
+                               coordenador, data_origin,status_pedido,valor):
     conn = conect()
     cursor = conn.cursor()
     cursor.execute(
@@ -104,18 +107,19 @@ def inserir_pedido_banco_dados(n_pedido, contrato, empenho,
         'data_entrega,'
         'coordenador,'
         'data_criacao_att,'
-        'status)'
-        'values (?,?,?,?,?,?,?,?)',
+        'status,'
+        'valor)'
+        'values (?,?,?,?,?,?,?,?,?)',
         (n_pedido, contrato,
          empenho, objeto, data_hora_entrega,
-         coordenador, data_origin,status_pedido)
+         coordenador, data_origin,status_pedido,valor)
     )
     conn.commit()
     conn.close()
 def att_pedido_DB(id, newn_pedido=None,
                   newn_contrato=None, newempenho=None,
                   newobjeto=None,newdata_hora_entrega=None,
-                  newcoord=None, data_att=None,novo_status=None):
+                  newcoord=None, data_att=None,novo_status=None,novo_valor=None):
     conn = conect()
     cursor = conn.cursor()
     update_columns = []
@@ -144,6 +148,9 @@ def att_pedido_DB(id, newn_pedido=None,
     if novo_status is not None:
         update_columns.append("status_pedido=?")
         parameters.append(novo_status)
+    if novo_valor is not None:
+        update_columns.append("valor=?")
+        parameters.append(novo_valor)
     sql = f'''
         UPDATE pedidos
         SET {', '.join(update_columns)}
@@ -267,6 +274,7 @@ def menu_pedidos():
                 newqtde = input('Nova Quantidade em função da unidade de fornecimento: ')
                 newobs = input('Novas Observações/instruções para o pedido (tamanho <= 1800 caracteres): ')
                 newcoord = input('Novos Coordenadores responsáveis pela execução: ')
+                novo_valor=float('Digite o valor atualizado para o pedido:')
 
                 atualizar_pedido(name, newn_pedido, data_att, id, newcnpj, newcontratante,
                                  newendereco_contratante, newn_contrato, newAta_RP, newempenho, newo_f,
@@ -281,12 +289,12 @@ def menu_pedidos():
                 for item in pedidos:
                     print(f'Pedido numero:{item[1]}, contrato:{item[2]}, empenho:{item[3]}, objeto:{item[4]}, '
                           f' data de entrega:{item[5]}, coordenador;{item[6]}, data de criação/atualização:{item[7]}'
-                          f' status{item[8]}')
+                          f' status{item[8]}, valor R$ {item[9]:.2f}')
             else:
                 item=pedidos
                 print(f'Pedido numero:{item[1]}, contrato:{item[2]}, empenho:{item[3]}, objeto:{item[4]}, '
                       f' data de entrega:{item[5]}, coordenador;{item[6]}, data de criação/atualização:{item[7]}'
-                      f' status{item[8]}')
+                      f' status{item[8]},valor R$ {item[9]:.2f}')
         elif opcao == '4':
             criar_tabela()
         elif opcao=='5':

@@ -8,7 +8,7 @@ def ler_cnpj(cnpjn):
     return f' o cnpj é {cnpj(cnpjn)}'
 
 
-def validacao():
+def validacao_CNPJ():
     while True:
         try:
             cnpjn = input('Digite o Cnpj: ')
@@ -20,6 +20,6 @@ def validacao():
             print('Porfavor ,tente novamente.\n')
 
 
-cnpjn = validacao()
+cnpjn = validacao_CNPJ()
 cnpj = ler_cnpj(cnpjn)
 print(cnpj)
