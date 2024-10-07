@@ -115,9 +115,6 @@ def limpar_banco():
     sheet.delete_rows(2, sheet.max_row)
     workbook.save('processos')
     conn.close()
-
-
-
 def menu_processos():
     while True:
         print("\nMenu:")

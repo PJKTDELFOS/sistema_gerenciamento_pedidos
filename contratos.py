@@ -90,7 +90,7 @@ def deletar_registros():
     con.commit()
     con.close()
 
-def menu():
+def menu_contratos():
     while True:
         print("\nSistema de Gerenciamento de Contratos")
         print("1. Criar planilha")
@@ -163,7 +163,8 @@ def menu():
             print("Opção inválida! Tente novamente.")
 
 
-menu()
+if __name__ =='__main__':
+    menu_contratos()
 
 
 
