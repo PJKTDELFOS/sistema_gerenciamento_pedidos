@@ -1,6 +1,6 @@
 import sqlite3
 from openpyxl import workbook,load_workbook
-import numpy as np
+
 
 def con():
     return sqlite3.connect("processos.db")
