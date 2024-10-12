@@ -43,7 +43,7 @@ class Contratos (models.Model):
 
     def __str__(self):
         return f"{'Seguro Ativo' if self.seguro else 'Seguro Inativo'}"
-
+#aaa
     def executado(self):
         pedidos = Pedidos.objects.filter(contrato=self)
         total_executado=sum(pedido.valor for pedido in pedidos)
