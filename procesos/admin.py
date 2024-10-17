@@ -6,6 +6,6 @@ from procesos import models
 
 @admin.register(models.processo)
 class processoadmin(admin.ModelAdmin):
-    list_display = ('id','orgao','numero','data','modalidade','modalidade',)
+    list_display = ('id','orgao','numero','data','modalidade','data','valor',)
     ordering = ('-id',)
-    search_fields = ('orgao','numero','descrição')
+    search_fields = ('orgao','numero','descrição','modalidade')
